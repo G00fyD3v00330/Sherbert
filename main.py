@@ -71,12 +71,8 @@ okeys = 0
 
 @client.event
 async def on_message(message):
-  if message.content.startswith('hi' or 'hello'):
-    await message.channel.send('hello')
-  elif message.content.startswith('ok' or 'Ok' or 'OK'):
+  if message.content.startswith('ok' or 'Ok' or 'OK'):
     await message.add_reaction('🥵')
-  elif message.content.startswith('shark' or 'baby'):
-    await message.channel.send('https://www.youtube.com/watch?v=GUYhUMUTgcA')
 
 
 ## why

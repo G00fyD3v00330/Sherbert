@@ -74,7 +74,7 @@ async def on_raw_reaction_add(payload):
       message = await channel.fetch_message(payload.message_id)
       reaction = get(message.reactions, emoji=payload.emoji.name)
       if reaction and reaction.count > 1:
-        ctx = message.channel
+        ctx = client.get_channel(1097475401925799976)
         msg = message
         embedsContent = []
         if msg.attachments:

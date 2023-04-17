@@ -7,6 +7,7 @@ import nextcord
 
 discord = nextcord
 from nextcord.ext import commands
+from nextcord.utils import get
 
 intents = nextcord.Intents.default()
 intents.message_content = True
@@ -58,24 +59,44 @@ Thread(target=app.run, args=("0.0.0.0", 8080)).start()
 client = commands.Bot(intents=intents,
                       activity=activity,
                       owner_id=941785334667169842,
-                      command_prefix='gawk>')
+                      command_prefix='>')
 
 
 @client.event
 async def on_ready():
   print('ok i pull up. - sherbert')
 
-
-okeys = 0
-
+@client.event
+async def on_raw_reaction_add(payload):
+    if payload.channel_id == 1097475356585361549:
+        if payload.emoji.name == "🔁":
+            channel = client.get_channel(payload.channel_id)
+            message = await channel.fetch_message(payload.message_id)
+            reaction = get(message.reactions, emoji=payload.emoji.name)
+            if reaction and reaction.count > 1:
+              ctx = message.channel
+              msg = message
+              embedsContent = []
+              if msg.attachments:
+                ## now time to get all attachments and post it with message
+                for i in msg.attachments:
+                  file = await i.to_file()
+                  list.append(embedsContent, file)
+              if embedsContent == []: ## in case if everything goes nuts with embeds
+                await ctx.send(f'{msg.author}:{msg.content}')
+              else:
+                await ctx.send(f'{msg.author}:{msg.content}', files=embedsContent)
 
 @client.event
 async def on_message(message):
   if message.content.startswith('ok' or 'Ok' or 'OK'):
     await message.add_reaction('🥵')
-
-
-## why
+  elif message.content.startswith('rug dog'):
+    await message.add_reaction('<:rugdog:1097010090436989060>')
+  elif message.content.startswith('oh no'):
+    await message.add_reaction('<:ohno:1097009850506031254>')
+  elif message.content.startswith('Sherbert DEBUG!'):
+    await message.add_reaction('🔁')
 
 
 @client.slash_command(description='only for gods')

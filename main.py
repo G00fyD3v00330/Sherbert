@@ -68,8 +68,8 @@ async def on_ready():
 staremoji = "⭐"
 @client.event
 async def on_raw_reaction_add(payload):
-  if payload.channel_id == 1097475356585361549:
-    if payload.emoji.name == staremoji:
+  if payload.channel_id == 1097475356585361549: ## WARNING TO PERSONS WHO WILL TAKE CODE FROM HERE
+    if payload.emoji.name == staremoji: ## This thing is connected to specific ID's, changing it to special command to set soon, but beware of that now
       channel = client.get_channel(payload.channel_id)
       message = await channel.fetch_message(payload.message_id)
       reaction = get(message.reactions, emoji=payload.emoji.name)

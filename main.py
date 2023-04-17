@@ -64,7 +64,7 @@ client = commands.Bot(intents=intents,
 
 @client.event
 async def on_ready():
-  print('ok i pull up. - sherbert')
+  print('Bot activated')
 staremoji = "⭐"
 @client.event
 async def on_raw_reaction_add(payload):

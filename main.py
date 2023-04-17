@@ -65,28 +65,26 @@ client = commands.Bot(intents=intents,
 @client.event
 async def on_ready():
   print('ok i pull up. - sherbert')
-
+staremoji = "⭐"
 @client.event
 async def on_raw_reaction_add(payload):
-    if payload.channel_id == 1097475356585361549:
-        if payload.emoji.name == "🔁":
-            channel = client.get_channel(payload.channel_id)
-            message = await channel.fetch_message(payload.message_id)
-            reaction = get(message.reactions, emoji=payload.emoji.name)
-            if reaction and reaction.count > 1:
-              ctx = message.channel
-              msg = message
-              embedsContent = []
-              if msg.attachments:
-                ## now time to get all attachments and post it with message
-                for i in msg.attachments:
-                  file = await i.to_file()
-                  list.append(embedsContent, file)
-              if embedsContent == []: ## in case if everything goes nuts with embeds
-                await ctx.send(f'{msg.author}:{msg.content}')
-              else:
-                await ctx.send(f'{msg.author}:{msg.content}', files=embedsContent)
-
+  if payload.channel_id == 1097475356585361549:
+    if payload.emoji.name == staremoji:
+      channel = client.get_channel(payload.channel_id)
+      message = await channel.fetch_message(payload.message_id)
+      reaction = get(message.reactions, emoji=payload.emoji.name)
+      if reaction and reaction.count > 1:
+        ctx = message.channel
+        msg = message
+        embedsContent = []
+        if msg.attachments:
+          for i in msg.attachments:
+            file = await i.to_file()
+            list.append(embedsContent, file)
+        if embedsContent == []:
+          await ctx.send(f'{msg.author}:{msg.content}')
+        else:
+          await ctx.send(f'{msg.author}:{msg.content}', files=embedsContent)
 @client.event
 async def on_message(message):
   if message.content.startswith('ok' or 'Ok' or 'OK'):
@@ -96,7 +94,7 @@ async def on_message(message):
   elif message.content.startswith('oh no'):
     await message.add_reaction('<:ohno:1097009850506031254>')
   elif message.content.startswith('Sherbert DEBUG!'):
-    await message.add_reaction('🔁')
+    await message.add_reaction(staremoji)
 
 
 @client.slash_command(description='only for gods')

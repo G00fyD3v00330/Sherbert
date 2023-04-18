@@ -4,7 +4,8 @@ os.system('pip install nextcord')
 ## installing thing because fuck replit download thing
 
 import nextcord
-
+import json
+import typing
 discord = nextcord
 from nextcord.ext import commands
 from nextcord.utils import get
@@ -60,21 +61,35 @@ client = commands.Bot(intents=intents,
                       activity=activity,
                       owner_id=941785334667169842,
                       command_prefix='>')
+## reading settings (only IDs, other programs will prob request things themselves)
+ReactingCh = None
+SendingCh = None
+with open('SettingsAndThings.json', 'r') as settings:
+  realdata = json.load(settings)
+  for i in realdata:
+    if i == "EmojiChannel":
+      ReactingCh = i
+    if i == "StarboardCh":
+      SendingCh = i
 
 
 @client.event
 async def on_ready():
   print('Bot activated')
+
+
 staremoji = "⭐"
+
+
 @client.event
 async def on_raw_reaction_add(payload):
-  if payload.channel_id == 1097475356585361549: ## WARNING TO PERSONS WHO WILL TAKE CODE FROM HERE
-    if payload.emoji.name == staremoji: ## This thing is connected to specific ID's, changing it to special command to set soon, but beware of that now
+  if payload.channel_id == ReactingCh:
+    if payload.emoji.name == staremoji:
       channel = client.get_channel(payload.channel_id)
       message = await channel.fetch_message(payload.message_id)
       reaction = get(message.reactions, emoji=payload.emoji.name)
       if reaction and reaction.count > 1:
-        ctx = client.get_channel(1097475401925799976)
+        ctx = client.get_channel(SendingCh)
         msg = message
         embedsContent = []
         if msg.attachments:
@@ -85,6 +100,8 @@ async def on_raw_reaction_add(payload):
           await ctx.send(f'{msg.author}:{msg.content}')
         else:
           await ctx.send(f'{msg.author}:{msg.content}', files=embedsContent)
+
+
 @client.event
 async def on_message(message):
   if message.content.startswith('ok' or 'Ok' or 'OK'):
@@ -141,12 +158,18 @@ async def uwutranslate(ctx, text=None):
   else:
     await ctx.send(generateUwU(text))
 
+
 @client.slash_command(description='tbh useless feature')
-async def hack(ctx, user: discord.Member = None, localIP = "153.23.34.321", localhacksettings="-s"):
+async def hack(ctx,
+               user: discord.Member = None,
+               localIP="153.23.34.321",
+               localhacksettings="-s"):
   if user == None:
     await ctx.send("ayo dude, write user first, goofy")
   else:
-    msg = await ctx.send(f'Welcome to the Sherbert Hacking Program. Hacking Settings: {localhacksettings}')
+    msg = await ctx.send(
+      f'Welcome to the Sherbert Hacking Program. Hacking Settings: {localhacksettings}'
+    )
     await asyncio.sleep(1)
     await msg.edit(f"Chosen Target: {user}. Hack starts in next 1 second")
     await asyncio.sleep(1)
@@ -158,18 +181,26 @@ async def hack(ctx, user: discord.Member = None, localIP = "153.23.34.321", loca
     await asyncio.sleep(1)
     await msg.edit("Loading passwords...")
     await asyncio.sleep(1)
-    possiblepass = {'IEatKids', "ISleep", "Sherbert", "password", "123412341234"}
-    await msg.edit(f"Passwords found! Discord_Password: {possiblepass[random.randint(0, 5)]}")
+    possiblepass = {
+      'IEatKids', "ISleep", "Sherbert", "password", "123412341234"
+    }
+    await msg.edit(
+      f"Passwords found! Discord_Password: {possiblepass[random.randint(0, 5)]}"
+    )
     await asyncio.sleep(1)
     await msg.edit(f"All passwords info has been sent to {ctx.user}")
     await asyncio.sleep(1)
-    await msg.edit("Scanning for strange files... ``(Search_Settings: SearchingFor: {kids, kids, kids})``")
+    await msg.edit(
+      "Scanning for strange files... ``(Search_Settings: SearchingFor: {kids, kids, kids})``"
+    )
     await asyncio.sleep(1)
     await msg.edit("194,503 strange files found. Reporting  FBI")
     await asyncio.sleep(1)
     if localhacksettings == "-sherbert":
       await asyncio.sleep(1)
-      await msg.edit("Sherbert setting detected. Uploading 100,303,205,303 pictures of sherbert (EST WEIGHT OF FILES: 2,5 TB)...")
+      await msg.edit(
+        "Sherbert setting detected. Uploading 100,303,205,303 pictures of sherbert (EST WEIGHT OF FILES: 2,5 TB)..."
+      )
       await asyncio.sleep(2)
       await msg.edit("Upload complete.")
       await asyncio.sleep(1)
@@ -179,5 +210,43 @@ async def hack(ctx, user: discord.Member = None, localIP = "153.23.34.321", loca
     await asyncio.sleep(1)
     await msg.edit(f"{user} has been hacked successfully!")
 
-token = os.environ.get("DISCORD_TOKEN") 
+
+# Settings for Starboard Feature
+
+
+@client.slash_command(description='Sets channel for reacts for StarBoard Feature (owner only)')
+async def setreactchannel(ctx, channel: discord.TextChannel = None):
+  if ctx.author.id == 941785334667169842:
+    if channel == None:
+      await ctx.send('dude this channel does not exist bruh')
+    else:
+      with open('SettingsAndThings.json') as settingFile:
+        loadData = json.load(settingFile)
+        for i in loadData:
+          if i == "EmojiChannel":
+            i = channel.id
+            break
+        json.dump(settingFile, loadData)
+  else:
+    await ctx.send('You are not my father')
+
+@client.slash_command(description='Sets channel for StarBoard Feature (owner only)')
+async def setstarboard(ctx, channel: discord.TextChannel = None):
+  if ctx.author.id == 941785334667169842:
+    if channel == None:
+      await ctx.send('dude this channel does not exist bruh')
+    else:
+      with open('SettingsAndThings.json') as settingFile:
+        loadData = json.load(settingFile)
+        for i in loadData:
+          if i == "StarboardCh":
+            i = channel.id
+            break
+        json.dump(settingFile, loadData)
+  else:
+    await ctx.send('You are not my father')
+
+# end of settings for starboard
+
+token = os.environ.get("DISCORD_TOKEN")
 client.run(token)
